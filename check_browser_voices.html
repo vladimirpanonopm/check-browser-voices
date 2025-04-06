@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Проверка голосов браузера</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      background-color: #f0f5fa;
+      color: #333;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #e0ecf7;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Проверка доступных голосов в браузере</h1>
+  <p>Нажмите кнопку, чтобы увидеть, какие языки и голоса доступны для <code>speechSynthesis</code> в вашем браузере.</p>
+  <button onclick="listVoices()">Показать голоса</button>
+
+  <table id="voicesTable" style="display: none;">
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <th>Язык</th>
+        <th>По умолчанию?</th>
+        <th>Локаль</th>
+      </tr>
+    </thead>
+    <tbody id="voicesBody"></tbody>
+  </table>
+
+  <script>
+    function listVoices() {
+      const table = document.getElementById("voicesTable");
+      const body = document.getElementById("voicesBody");
+      body.innerHTML = "";
+      const voices = speechSynthesis.getVoices();
+
+      voices.forEach(voice => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${voice.name}</td>
+          <td>${voice.lang}</td>
+          <td>${voice.default ? "✅" : ""}</td>
+          <td>${voice.localService ? "🖥️ Локальный" : "🌐 Сетевой"}</td>
+        `;
+        body.appendChild(row);
+      });
+
+      table.style.display = "table";
+    }
+
+    // Нужно подождать, пока голоса загрузятся
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = listVoices;
+    }
+  </script>
+</body>
+</html>
